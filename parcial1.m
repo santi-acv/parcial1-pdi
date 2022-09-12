@@ -4,6 +4,8 @@ if size(f,3) == 3
     f = rgb2gray(f);
 end
 
+f = imnoise(f, 'salt & pepper', 0.7);
+
 g = FiltroMedianaAdaptativo(f);
 
 imshow(f), figure, imshow(g);
@@ -25,8 +27,6 @@ function g = FiltroMedianaAdaptativo(f)
             
             % Extrae la ventana
             h = f(i:i+2, j:j+2);
-            
-            % TODO Implementa el algoritmo propuesto
             pixel = h(2,2);
 
             % Obtenemos los 3 pixeles
@@ -36,17 +36,21 @@ function g = FiltroMedianaAdaptativo(f)
             if p_min > 0 && p_max < 255 && p_min < pixel && pixel < p_max
                 % No esta corrupto, se deja igual
             else
-                % Si esta corrupto, tomamos la mediana sie s que no esta
+                % Si esta corrupto, tomamos la mediana si es que no esta
                 % corrupta
                 if p_min < p_med  && p_med < p_max
                     pixel = p_med;
                 else
-                    % Tomamos el valor anterior
-                    pixel = h(2, 1);
+                    % Tomamos un valor no corrupto del vecindario
+                    h = sort(h(:));
+                    pixel = h(find(h, 1, "first"));
+                    if isempty(pixel)
+                        pixel = 0;
+                    end
                 end
             end
 
-            % TODO Almacena el resultado
+            % Almacena el resultado
             g(i,j) = pixel;    
         end
     end
