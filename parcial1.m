@@ -47,6 +47,11 @@ function g = FiltroMedianaAdaptativo(f)
                     if isempty(pixel)
                         pixel = 0;
                     end
+                    % Si todo el vecindario esta corrupto, toma el valor de
+                    % la izquierda
+                    if (pixel == 255 || pixel == 0) && j > 1
+                        pixel = g(i, j-1);
+                    end
                 end
             end
 
